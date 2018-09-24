@@ -1,0 +1,44 @@
+body {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.carousel {
+    margin: 0px auto;
+    width: 200px;
+    height: 200px;
+    border: 2px solid grey;
+}
+
+.carousel-inner {
+    height: 200px;
+}
+
+.card {
+    margin: 10px auto;
+    max-width: 500px;
+    min-width: 300px;
+}
+
+.input-group {
+    margin: 0 auto;
+    max-width: 500px;
+    min-width: 300px;
+}
+
+.name {
+    text-align: center; 
+}
+
+.btn-primary {
+    margin-left: 33.33%;
+    margin-top: 10px;
+}
+
+#results {
+    margin: 60px auto;
+}
+
+#top {
+    margin: 10px;
+}
