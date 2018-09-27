@@ -16,9 +16,9 @@
         <div class="row">
             <div class="col-12" id='top'>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Your Name" aria-label="Your Name" aria-describedby="name-select">
+                    <input id='name-input' type="text" class="form-control" placeholder="Your Name" aria-label="Your Name" aria-describedby="name-select">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="name-select">Submit</button>
+                        <button class="btn btn-outline-secondary" type="submit" id="name-select">Submit</button>
                     </div>
                 </div>
             </div>
@@ -47,13 +47,14 @@
                     <span class="sr-only">Next</span>
                     </a>
                 </div>
-                <button class="btn btn-primary" type="button">Select</button>
+                <p id="p1wins">Wins: 0  Losses: 0</p>
+                <button class="btn btn-primary" type="button" id='p1select'>Select</button>
             </div>
             <div class="col-4">
                 <div class="card" id='results'>
                     <div class="card-body">
-                        <h5 class="card-title">Results</h5>
-                        <p class="card-text">Content</p>
+                        <h5 class="card-title" id="results-title"></h5>
+                        <p class="card-text" id='results-content'>Please input your name above</p>
                     </div>
                 </div>
             </div>
@@ -81,7 +82,8 @@
                     <span class="sr-only">Next</span>
                     </a>
                 </div>
-                <button class="btn btn-primary" type="button">Select</button>
+                <p id="p2wins">Wins: 0  Losses: 0</p>
+                <button class="btn btn-primary" type="button"id='p2select'>Select</button>
             </div>
         </div>
         <!-- This row has the chat -->
@@ -97,9 +99,9 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">Chat</span>
                     </div>
-                    <textarea class="form-control" aria-label="Chat"></textarea>
+                    <textarea class="form-control" aria-label="Chat" id='msg'></textarea>
                     <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Send</button>
+                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Send</button>
                     </div>
             </div>
         </div>

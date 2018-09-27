@@ -42,3 +42,7 @@ body {
 #top {
     margin: 10px;
 }
+
+#p2wins, #p1wins {
+    text-align: center;
+}
