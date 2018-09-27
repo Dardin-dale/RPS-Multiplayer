@@ -19,7 +19,7 @@ $(document).ready(function() {
     win: 0,
     loss: 0,
     play: true,
-    num: 0
+    num: 0,
   }
 
 //  // temp to remove data:
@@ -98,7 +98,8 @@ $(document).ready(function() {
     //Chat button
     $('#send').on('click', function(event) {
         event.preventDefault();
-        var msg = player.name + ': '+ $('#msg').val();
+        var msg = {text: player.name + ': '+ $('#msg').val(),
+                   dateAdded: firebase.database.ServerValue.TIMESTAMP}
         db.ref().child('chat').push(msg);
     })
 
