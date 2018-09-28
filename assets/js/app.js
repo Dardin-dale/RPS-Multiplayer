@@ -61,7 +61,7 @@ $(document).ready(function() {
             $('#results-title').text('Hello ' + nam + " you are Player" + numplayers);
             // if only one player wait for newplayer
             if (numplayers == 1) {
-                $('#reults-content').text('Please wait for an opponent');
+                $('#results-content').text('Please wait for an opponent');
                 // hides player 2 select and rotates carousel
                 $('#p2select').hide();
                 $('#player2Choice').attr('data-interval', '500');
@@ -71,6 +71,7 @@ $(document).ready(function() {
                 $('#p1select').hide();
                 //supposed to rotate value
                 $('#player1Choice').attr('data-interval', '500');
+                $('#results-content').text('');
                 //give some time to display before starting game
                 setTimeout(function() {
                     db.ref().child('turn').set(1);
@@ -86,9 +87,12 @@ $(document).ready(function() {
     //Run Game Logic 
     turnref.on('value', function() {
         //Get value from player 1
-
+        var turn = db.ref().child('turn');
+        
 
         //Get value from player 2
+
+        
 
 
         //compare values and Update page/ wins and losses
@@ -100,15 +104,19 @@ $(document).ready(function() {
         event.preventDefault();
         var msg = {text: player.name + ': '+ $('#msg').val(),
                    dateAdded: firebase.database.ServerValue.TIMESTAMP}
+        // console.log(msg);
         db.ref().child('chat').push(msg);
     })
 
     //chat listener/re-draw
     db.ref().child('chat').orderByChild("dateAdded").limitToLast(1).on('child_added', function(snap) {
-        var newP = $('<p>').text(snap.val());
-
-        //add newP to chat card
+        var newP = $('<p class="chat-text">').text(snap.val().text);
+        $('#chat').append(newP);
     })
+
+    //add disconnect to chat
+    db.ref().child('chat').onDisconnect().set({last : {text: player.name + ' disconnected',
+            dateAdded: firebase.database.ServerValue.TIMESTAMP}});
     
     
 })
