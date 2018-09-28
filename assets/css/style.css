@@ -35,6 +35,14 @@ body {
     margin-top: 10px;
 }
 
+.chat-text {
+    margin: 0px;
+}
+
+#chat {
+    overflow-y: scroll;
+}
+
 #results {
     margin: 60px auto;
 }

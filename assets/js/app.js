@@ -99,6 +99,17 @@ $(document).ready(function() {
 
     })
 
+    //Select buttons
+    $('#p1select').on('click', function(){
+        var choice = $('#player1Choice .carousel-inner').children('.item').hasClass('active').attr('data-choice');
+        db.ref().child('players').child(player.num).child('choice').set(choice);
+    })
+
+    $('#p2select').on('click', function(){
+        var choice = $('#player2Choice .carousel-inner').children('.item').hasClass('active').attr('data-choice');
+        db.ref().child('players').child(player.num).child('choice').set(choice);
+    })
+
     //Chat button
     $('#send').on('click', function(event) {
         event.preventDefault();
