@@ -18,16 +18,18 @@ $(document).ready(function() {
     name: '',
     win: 0,
     loss: 0,
+    choice: '',
     play: true,
     num: 0,
   }
+  
 
 //  // temp to remove data:
 //   db.ref().child('players').remove();
 //   db.ref().child('spectators').remove();
 //   db.ref().child('turn').remove();
 
-  // Controls number of players and 
+  // Controls number of players and handles db additions
   $('#name-select').on('click', function(event) {
     event.preventDefault();
     var nam = $('#name-input').val().trim();
@@ -63,6 +65,7 @@ $(document).ready(function() {
             if (numplayers == 1) {
                 $('#results-content').text('Please wait for an opponent');
                 // hides player 2 select and rotates carousel
+                $('#player1').text('Player 1: ' + nam);
                 $('#p2select').hide();
                 $('#player2Choice').attr('data-interval', '500');
             
@@ -72,57 +75,146 @@ $(document).ready(function() {
                 //supposed to rotate value
                 $('#player1Choice').attr('data-interval', '500');
                 $('#results-content').text('');
+                $('#player2').text('Player 2: ' + nam);
                 //give some time to display before starting game
                 setTimeout(function() {
-                    db.ref().child('turn').set(1);
+                    db.ref().child('turn').set(0);
                 }, 2000);
             }
         }
-        
+        $('#top').hide();
     });
 
   })
 
+    // ########################################
+    // GAME LOGIC
+    // ########################################
     var turnref = db.ref().child('turn');
-    //Run Game Logic 
     turnref.on('value', function() {
         //Get value from player 1
         var turn = db.ref().child('turn');
-        
+        //ask player1 for
+        if (turn == 0){
+            $('#results-title').text("Player 1's turn");
+            $('#results-content').text("");
+            turn.set(1);
+        } else if(turn == 2){
+            $('#results-title').text("Player 2's turn");
+            $('#results-content').text("");
+        }
+    })
 
-        //Get value from player 2
-
-        
-
-
-        //compare values and Update page/ wins and losses
+    var play1ref = db.ref().child('players').child('1').child('choice');
+    play1ref.on('value', function(snap) {
+        var turn = db.ref().child('turn');
+        var one = snap.val();
+        if(turn == 1 && one != ''){
+            turn.set(2);
+        }
 
     })
 
+    var play2ref = db.ref().child('players').child('2').child('choice');
+    play2ref.on('value', function(snap) {
+        
+        var turn = db.ref().child('turn');
+        console.log(turn);
+        var two = snap.val();
+        var one = snap.val();
+        var p1 = db.ref().child('players').child('1');
+        var p2 = db.ref().child('players').child('2');
+        if(turn == 2 && two != '' && one != ''){
+            //compare values
+            console.log(one == two);
+            if(two === one) {
+                $('#results-title').text('Tie! you both picked' + one);
+            } else if (one == 'rock'){
+                if (two == 'scissors') {
+                    $('#results-title').text('Player1 Wins!');
+                    p1.child('wins').set(p1.child('wins') + 1);
+                    p2.child('loss').set(p2.child('loss') + 1);  
+                } else {
+                    $('#results-title').text('Player2 Wins!');
+                    p2.child('wins').set(p2.child('wins') + 1);
+                    p1.child('loss').set(p1.child('loss') + 1); 
+                }
+            } else if (one == 'paper'){
+                if (two == 'rock') {
+                    $('#results-title').text('Player1 Wins!');
+                    p1.child('wins').set(p1.child('wins') + 1);
+                    p2.child('loss').set(p2.child('loss') + 1);
+                } else {
+                    $('#results-title').text('Player2 Wins!');
+                    p2.child('wins').set(p2.child('wins') + 1);
+                    p1.child('loss').set(p1.child('loss') + 1); 
+                }
+            } else if (one == 'scissors'){
+                if (two == 'paper') {
+                    $('#results-title').text('Player1 Wins!');
+                    p1.child('wins').set(p1.child('wins') + 1);
+                    p2.child('loss').set(p2.child('loss') + 1);
+                } else {
+                    $('#results-title').text('Player2 Wins!');
+                    p2.child('wins').set(p2.child('wins') + 1);
+                    p1.child('loss').set(p1.child('loss') + 1); 
+                }
+            }
+
+            //Update wins/losses
+            $('#p1wins').text('Wins: ' + p1.child('wins') + ' Losses: ' +  p1.child('loss'));
+            $('#p2wins').text('Wins: ' + p2.child('wins') + ' Losses: ' +  p2.child('loss'));
+
+            //reset buttons, turns, choices
+            one.set('');
+            two.set('');
+            $("#p1select").removeClass('disabled');
+            $("#p2select").removeClass('disabled');
+            setTimeout(function() {
+                db.ref().child('turn').set(0);
+            }, 3000);
+        }
+        
+    })
+    
+
+    // ########################################
+    // BUTTONS & CHAT
+    // ########################################
     //Select buttons
     $('#p1select').on('click', function(){
-        var choice = $('#player1Choice .carousel-inner').children('.item').hasClass('active').attr('data-choice');
+        var ele = $('#player1Choice .carousel-indicators li.active');
+        var choice = ele.data('value');
+        $("#p1select").addClass('disabled');
         db.ref().child('players').child(player.num).child('choice').set(choice);
     })
 
     $('#p2select').on('click', function(){
-        var choice = $('#player2Choice .carousel-inner').children('.item').hasClass('active').attr('data-choice');
+        var ele = $('#player2Choice .carousel-indicators li.active');
+        var choice = ele.data('value');
+        $("#p2select").addClass('disabled');
         db.ref().child('players').child(player.num).child('choice').set(choice);
     })
 
     //Chat button
     $('#send').on('click', function(event) {
         event.preventDefault();
-        var msg = {text: player.name + ': '+ $('#msg').val(),
-                   dateAdded: firebase.database.ServerValue.TIMESTAMP}
-        // console.log(msg);
-        db.ref().child('chat').push(msg);
+        if($('#msg').val() != ''){
+            var msg = {text: player.name + ': '+ $('#msg').val(),
+                    dateAdded: firebase.database.ServerValue.TIMESTAMP}
+            // console.log(msg);
+            db.ref().child('chat').push(msg);
+            $('textarea').val('');
+        }
     })
 
     //chat listener/re-draw
     db.ref().child('chat').orderByChild("dateAdded").limitToLast(1).on('child_added', function(snap) {
         var newP = $('<p class="chat-text">').text(snap.val().text);
-        $('#chat').append(newP);
+        //weird disconnect on page load error work around
+        if(newP.text() != ' disconnected') {
+            $('#chat').append(newP);
+        }
     })
 
     //add disconnect to chat
